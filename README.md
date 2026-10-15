@@ -1,6 +1,6 @@
 # Signal — Live Commerce Voice of Customer
 
-A working first version of the uploaded live-commerce VOC project: a responsive dashboard backed by FastAPI and SQLite. Capture public customer feedback, keep its original evidence, search the inbox, and view counts by platform and feedback theme.
+A working first version of the uploaded live-commerce VOC project: a responsive dashboard backed by FastAPI, with SQLite locally and PostgreSQL for free hosting. Capture public customer feedback, keep its original evidence, search the inbox, and view counts by platform and feedback theme.
 
 ## Dashboard preview
 
@@ -10,7 +10,7 @@ This screenshot shows the implemented dashboard. It is a static preview; the int
 
 ## Open the interactive app online
 
-[Deploy on Render](https://render.com/deploy?repo=https://github.com/kanhao-bytedance/bytedance) using the checked-in Blueprint. This creates a paid Starter service with a persistent feedback disk and password access. Review the cost in Render before confirming. Follow the [deployment guide](docs/deployment.md) for setup, login, and live verification. No public instance has been provisioned from this workspace.
+[Deploy on Render](https://render.com/deploy?repo=https://github.com/kanhao-bytedance/bytedance) using the checked-in Blueprint. This selects Render’s free web service with password access. First create a free Neon PostgreSQL database, then enter its connection URL when Render prompts for `DATABASE_URL`. No paid disk or paid database is provisioned. Free-tier usage limits and idle wake-up delays apply. Follow the [deployment guide](docs/deployment.md) for setup, login, and live verification. No public instance has been provisioned from this workspace.
 
 ## Run on your computer
 
@@ -43,7 +43,7 @@ Copy `.env.example` to `.env` locally, or use your hosting service's secure envi
 
 - `OPENAI_API_KEY`: enables AI classification of new feedback. `OPENAI_MODEL` selects a model available to your account that supports Responses API structured outputs. Without a key, records are explicitly marked **unclassified**, with relevance `0`; default categories and severity have not been evaluated. Adding a key does not reclassify existing records automatically.
 - `REDDIT_BEARER_TOKEN`: an authorized Reddit OAuth bearer token. Set `REDDIT_USER_AGENT` to identify your application as required by Reddit. Use **Collect from Reddit** to search up to 100 posts per request. Expired tokens or denied access need to be corrected in your Reddit configuration.
-- `DATABASE_URL`: defaults to `sqlite:///./voc.db`. PostgreSQL is supported by the installed psycopg driver using a URL such as `postgresql+psycopg://…`; real credentials belong in secure configuration.
+- `DATABASE_URL`: defaults to `sqlite:///./voc.db`. For hosting, paste the PostgreSQL connection string from Neon into Render’s secure environment configuration. Standard `postgresql://` and `postgres://` URLs automatically use the installed psycopg driver; URL query parameters such as `sslmode=require` are preserved. Real credentials belong in secure configuration.
 
 Required outbound destinations for enabled integrations are `api.openai.com` and `oauth.reddit.com`. The local manual workflow needs neither. Live integration access has not been verified; automated tests mock provider responses.
 

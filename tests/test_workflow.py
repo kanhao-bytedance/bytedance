@@ -170,3 +170,16 @@ def test_hosted_mode_refuses_to_start_without_password(monkeypatch):
     with pytest.raises(RuntimeError, match="DASHBOARD_PASSWORD"):
         with TestClient(main.app):
             pass
+
+
+@pytest.mark.parametrize("scheme", ["postgres", "postgresql", "postgresql+psycopg"])
+def test_hosting_database_url_uses_installed_driver_and_preserves_tls(scheme):
+    from app.settings import Settings
+    value = f"{scheme}://test-user:test-pass@database.example/voc?sslmode=require&channel_binding=require"
+    parsed = Settings(database_url=value, _env_file=None)
+    assert parsed.database_url == "postgresql+psycopg://test-user:test-pass@database.example/voc?sslmode=require&channel_binding=require"
+
+
+def test_local_sqlite_url_is_preserved():
+    from app.settings import Settings
+    assert Settings(database_url="sqlite:///./voc.db", _env_file=None).database_url == "sqlite:///./voc.db"
