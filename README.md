@@ -79,3 +79,5 @@ Tests use isolated in-memory databases and do not touch your feedback. They cove
 This is a local development MVP. It has no authentication or access control; add those before exposing write endpoints on a public deployment. There are no scheduled collectors, comments/replies ingestion, historical comparison metrics, AI reclassification jobs, or schema migrations yet. Existing databases from the original ZIP need a migration before using the new `relevant` and `classification_status` columns; use a fresh development database or a separately planned migration, without deleting existing data.
 
 Next milestones: authorized live integration validation, background collection with checkpoints, database migrations, time-series trends, and authenticated deployment. Source adapters should use approved APIs or permitted exports.
+
+The earlier repository initialization notes are preserved in [docs/repository-initialization.md](docs/repository-initialization.md).
