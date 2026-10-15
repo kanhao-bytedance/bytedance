@@ -1,6 +1,9 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
+    dashboard_user: str = "admin"
+    dashboard_password: str | None = None
+    require_dashboard_auth: bool = False
     database_url: str = "sqlite:///./voc.db"
     openai_api_key: str | None = None
     openai_model: str = "gpt-6-luna"

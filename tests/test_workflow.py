@@ -137,3 +137,36 @@ def test_dashboard_and_health(client):
     assert client.get("/static/app.js").status_code == 200
     assert client.get("/static/styles.css").status_code == 200
     assert client.get("/health").json() == {"ok":True, "ai_enabled":False, "reddit_enabled":False}
+
+
+def test_hosted_auth_protects_dashboard_api_docs_and_assets(client, monkeypatch):
+    monkeypatch.setattr(main.settings, "dashboard_password", "test-password-only")
+    for path in ["/", "/feedback", "/summary", "/docs", "/openapi.json", "/static/app.js"]:
+        response = client.get(path)
+        assert response.status_code == 401
+        assert response.headers["www-authenticate"].startswith("Basic")
+        assert client.get(path, auth=("admin", "wrong")).status_code == 401
+        assert client.get(path, auth=("admin", "test-password-only")).status_code == 200
+    assert client.post("/ingest", json=item()).status_code == 401
+    assert client.get("/health").status_code == 200
+    assert client.get("/", headers={"Authorization": "Basic not-base64"}).status_code == 401
+
+
+def test_hosted_auth_blocks_cross_origin_writes(client, monkeypatch):
+    monkeypatch.setattr(main.settings, "dashboard_password", "test-password-only")
+    auth = ("admin", "test-password-only")
+    assert client.post("/ingest", json=item(), auth=auth,
+                       headers={"Origin": "https://another-site.example"}).status_code == 403
+    assert client.post("/ingest", json=item(), auth=auth,
+                       headers={"Origin": "https://[invalid"}).status_code == 403
+    assert client.get("/summary", auth=auth).json()["total"] == 0
+    assert client.post("/ingest", json=item(), auth=auth,
+                       headers={"Origin": "http://testserver"}).status_code == 200
+
+
+def test_hosted_mode_refuses_to_start_without_password(monkeypatch):
+    monkeypatch.setattr(main.settings, "require_dashboard_auth", True)
+    monkeypatch.setattr(main.settings, "dashboard_password", None)
+    with pytest.raises(RuntimeError, match="DASHBOARD_PASSWORD"):
+        with TestClient(main.app):
+            pass

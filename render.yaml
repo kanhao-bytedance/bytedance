@@ -1,0 +1,27 @@
+# Render Blueprint: one web service with durable SQLite storage.
+# This selects a paid Starter instance and a 1 GB persistent disk.
+# Review the current cost in Render before creating the service.
+services:
+  - type: web
+    name: signal-voc
+    runtime: python
+    plan: starter
+    region: oregon
+    buildCommand: pip install -r requirements.lock.txt
+    startCommand: ./scripts/start.sh
+    healthCheckPath: /health
+    disk:
+      name: feedback-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.14
+      - key: DATABASE_URL
+        value: sqlite:////var/data/voc.db
+      - key: REQUIRE_DASHBOARD_AUTH
+        value: "true"
+      - key: DASHBOARD_USER
+        value: admin
+      - key: DASHBOARD_PASSWORD
+        generateValue: true

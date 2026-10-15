@@ -8,6 +8,10 @@ This screenshot shows the implemented dashboard. It is a static preview; the int
 
 ![Signal dashboard](docs/dashboard.png)
 
+## Open the interactive app online
+
+[Deploy on Render](https://render.com/deploy?repo=https://github.com/kanhao-bytedance/bytedance) using the checked-in Blueprint. This creates a paid Starter service with a persistent feedback disk and password access. Review the cost in Render before confirming. Follow the [deployment guide](docs/deployment.md) for setup, login, and live verification. No public instance has been provisioned from this workspace.
+
 ## Run on your computer
 
 From this repository's root, with Python 3.12 or newer:
@@ -76,8 +80,8 @@ Tests use isolated in-memory databases and do not touch your feedback. They cove
 
 ## Current scope and next steps
 
-This is a local development MVP. It has no authentication or access control; add those before exposing write endpoints on a public deployment. There are no scheduled collectors, comments/replies ingestion, historical comparison metrics, AI reclassification jobs, or schema migrations yet. Existing databases from the original ZIP need a migration before using the new `relevant` and `classification_status` columns; use a fresh development database or a separately planned migration, without deleting existing data.
+This MVP supports optional shared-workspace password access locally; the Render deployment requires it. Multi-user accounts, role-based permissions, and an audit log are not implemented. There are no scheduled collectors, comments/replies ingestion, historical comparison metrics, AI reclassification jobs, or schema migrations yet. Existing databases from the original ZIP need a migration before using the new `relevant` and `classification_status` columns; use a fresh development database or a separately planned migration, without deleting existing data.
 
-Next milestones: authorized live integration validation, background collection with checkpoints, database migrations, time-series trends, and authenticated deployment. Source adapters should use approved APIs or permitted exports.
+Next milestones: authorized live integration validation, background collection with checkpoints, database migrations, time-series trends, and live hosting validation. Source adapters should use approved APIs or permitted exports.
 
 The earlier repository initialization notes are preserved in [docs/repository-initialization.md](docs/repository-initialization.md).

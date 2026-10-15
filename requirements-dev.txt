@@ -1,2 +1,2 @@
--r requirements.txt
+-r requirements.lock.txt
 pytest>=8

@@ -17,15 +17,19 @@ from .schemas import RawFeedback
 from .services.classifier import classify
 from .collectors.reddit import search_posts
 from .settings import settings
+from .security import DashboardAuthMiddleware
 
 
 @asynccontextmanager
 async def lifespan(app):
+    if settings.require_dashboard_auth and not settings.dashboard_password:
+        raise RuntimeError("DASHBOARD_PASSWORD must be configured before starting this hosted deployment.")
     Base.metadata.create_all(engine)
     yield
 
 
 app = FastAPI(title="Live Commerce Voice of Customer", version="0.2.0", lifespan=lifespan)
+app.add_middleware(DashboardAuthMiddleware)
 STATIC = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
